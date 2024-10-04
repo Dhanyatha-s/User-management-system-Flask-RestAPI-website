@@ -1,1 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <style>
+        bosy{
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        h1{
+            text-align: center;
+        }
+        a{
+            display: block;
+            margin: 10px 0;
+            text-align: center;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover{
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to user Management</h1>
+    <a href="/register">Register a New User!</a>
+    <a href="/api/users"  id="view-users">View Registred Users</a>
+    <div id="user_list" style="display: none; margin-top:20px;">
+        <h2>User Registration</h2>
+        <ul id="users"></ul>
+    </div>
 
+    <script>
+        document.getElementById('view-users').addEventListener('click', function(event){
+            event.preventDefault()
+            fetch('/api/users')
+                .then(response => Response.json())
+                .then(data =>{
+                    const userList = document.getElementById('users')
+                    userList.innerhtml = " ";
+                    data.foreach(user => {
+                        const li = document.createElement('li')
+                        li.textContent = '${user.id}: ${user.username}'
+                        userList.appendChild(li)
+
+                    })
+                    document.getElementById('user-list').style.display = 'block'
+                })
+        })
+    </script>
+</body>
+</html>
