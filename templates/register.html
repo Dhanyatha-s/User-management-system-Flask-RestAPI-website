@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type='text'],
+        input[type='password'] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type='submit'] {
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+        .flash {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .flash.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>Register User</h1>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form id="register-form">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+
+        <input type="submit" value="Register">
+    </form>
+
+    <div id="message" style="text-align:center; margin-top:20px;"></div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => { throw new Error(data.message); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Display a success message and redirect
+                document.getElementById('message').textContent = 'Registration successful!';
+                document.getElementById('message').style.color = 'green';
+                setTimeout(() => {
+                    window.location.href = '/';  // Redirect to the index page after a short delay
+                }, 2000);
+            })
+            .catch(error => {
+                document.getElementById('message').textContent = error.message;
+                document.getElementById('message').style.color = 'red';
+            });
+        });
+    </script>
+</body>
+</html>
